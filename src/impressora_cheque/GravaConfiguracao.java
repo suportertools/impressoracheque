@@ -79,11 +79,8 @@ public class GravaConfiguracao {
             JLabel label_caminho = new JLabel(field_caminho.getText());
             label_caminho.setBounds(10, 10, 800, 30);
 
-            JLabel label_impressora = new JLabel("Impressora: \n " + field_impressora.getText());
+            JLabel label_impressora = new JLabel("Impressora: " + field_impressora.getText() + " - PORTA: " + field_port.getText());
             label_impressora.setBounds(10, 30, 800, 30);
-            
-            JLabel label_port = new JLabel("PORTA: \n " + field_port.getText());
-            label_port.setBounds(10, 100, 800, 30);
 
             //JLabel label_ativa = new JLabel("ATIVA");
             label_ativa.setBounds(10, 50, 500, 50);
@@ -93,7 +90,6 @@ public class GravaConfiguracao {
             frame.add(button_sair);
             frame.add(label_caminho);
             frame.add(label_impressora);
-            frame.add(label_port);
             frame.add(label_ativa);
 
             frame.setVisible(true);
