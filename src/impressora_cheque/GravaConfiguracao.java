@@ -47,6 +47,7 @@ public class GravaConfiguracao {
 
     private JTextField field_caminho = new JTextField("");
     private JTextField field_impressora = new JTextField("");
+    private JTextField field_port = new JTextField("");
     private JLabel label_ativa = new JLabel("ATIVA");
     
     public GravaConfiguracao() {
@@ -80,6 +81,9 @@ public class GravaConfiguracao {
 
             JLabel label_impressora = new JLabel("Impressora: \n " + field_impressora.getText());
             label_impressora.setBounds(10, 30, 800, 30);
+            
+            JLabel label_port = new JLabel("PORTA: \n " + field_port.getText());
+            label_port.setBounds(10, 100, 800, 30);
 
             //JLabel label_ativa = new JLabel("ATIVA");
             label_ativa.setBounds(10, 50, 500, 50);
@@ -89,6 +93,7 @@ public class GravaConfiguracao {
             frame.add(button_sair);
             frame.add(label_caminho);
             frame.add(label_impressora);
+            frame.add(label_port);
             frame.add(label_ativa);
 
             frame.setVisible(true);
@@ -139,6 +144,7 @@ public class GravaConfiguracao {
 
                 field_caminho.setText(json.getString("caminho"));
                 field_impressora.setText(json.getString("impressora"));
+                field_port.setText(json.getString("port"));
 
             } catch (IOException | JSONException ex) {
                 JOptionPane.showMessageDialog(null, ex.getMessage());
@@ -159,6 +165,8 @@ public class GravaConfiguracao {
         panel.add(field_caminho);
         panel.add(new JLabel("Número da Impressora"));
         panel.add(field_impressora);
+        panel.add(new JLabel("Porta"));
+        panel.add(field_port);
 
         int result = JOptionPane.showConfirmDialog(null, panel, "Salvar Configuração", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
@@ -260,5 +268,13 @@ public class GravaConfiguracao {
 
     public void setLabel_ativa(JLabel label_ativa) {
         this.label_ativa = label_ativa;
+    }
+
+    public JTextField getField_port() {
+        return field_port;
+    }
+
+    public void setField_port(JTextField field_port) {
+        this.field_port = field_port;
     }
 }

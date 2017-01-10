@@ -16,6 +16,8 @@ import javax.swing.JOptionPane;
 import org.json.JSONException;
 import org.json.JSONObject;
 import utils.AnaliseString;
+import utils.Block;
+import utils.BlockInterface;
 import utils.WSImpressoraCheque;
 
 /**
@@ -30,19 +32,34 @@ public class Impressora_cheque {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        Block.TYPE = "IMPRESSORA";
+        if (!Block.registerInstance()) {
+            // instance already running.
+            System.out.println("Another instance of this application is already running.  Exiting.");
+            JOptionPane.showMessageDialog(null, "Aplicação já esta em execução");
+            System.exit(0);
+        }
+        Block.setBlockInterface(new BlockInterface() {
+            @Override
+            public void newInstanceCreated() {
+                System.out.println("New instance detected...");
+                // this is where your handler code goes...
+            }
+        });
         if (!GC.conf()) {
             return;
         }
         try {
             if (!impressora_ativa()) {
                 JOptionPane.showMessageDialog(null, "Erro ao Iniciar Impressora!");
+                System.exit(0);
                 return;
             }
-            
+
             GC.criar_SystemTray();
-            
+
             Boolean parar = false;
-            
+
             JOptionPane.showMessageDialog(null, "Programa em Funcionamento.");
             while (!parar) {
                 StringBuilder response = new StringBuilder();
@@ -74,10 +91,9 @@ public class Impressora_cheque {
                             jSONObject.getString("data"),
                             jSONObject.getString("mensagem")
                     );
-                    
+
                     Bematech lib = (Bematech) Native.loadLibrary("BEMADP32", Bematech.class);
-                    
-                    if (erro(lib.IniciaPorta("COM2"))) {
+                    if (erro(lib.IniciaPorta(GC.getField_port().getText()))) {
                         impressora_limpa("Não foi possível abrir porta da Impressora");
                         Thread.sleep(1000);
                         continue;
@@ -89,7 +105,7 @@ public class Impressora_cheque {
                         continue;
                     }
 
-                    if (erro(lib.FechaPorta("COM2"))) {
+                    if (erro(lib.FechaPorta(GC.getField_port().getText()))) {
                         impressora_limpa("Não foi possível fechar porta da Impressora");
                         Thread.sleep(1000);
                         continue;

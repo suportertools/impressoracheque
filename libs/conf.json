@@ -1,0 +1,5 @@
+{
+    "port": "COM5",
+    "caminho":"http://localhost:8084/Sindical/ws/Sindical",
+    "impressora":"1"
+}
