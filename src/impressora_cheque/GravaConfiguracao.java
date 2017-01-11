@@ -49,7 +49,7 @@ public class GravaConfiguracao {
     private JTextField field_impressora = new JTextField("");
     private JTextField field_port = new JTextField("");
     private JLabel label_ativa = new JLabel("ATIVA");
-    
+
     public GravaConfiguracao() {
         //field_impressora.setEnabled(false);
 
@@ -111,7 +111,7 @@ public class GravaConfiguracao {
         return action_esconder;
     }
 
-    public void criar_SystemTray(){
+    public void criar_SystemTray() {
         try {
             //PopupMenu popupMenu = new PopupMenu();
 
@@ -126,11 +126,11 @@ public class GravaConfiguracao {
             e.getMessage();
         }
     }
-    
+
     public Boolean conf() {
         File file = new File("C:/rtools/impressora");
         file.mkdirs();
-        
+
         File file_exists = new File("C:/rtools/impressora/conf.json");
         if (file_exists.exists()) {
             String str_json;
@@ -178,11 +178,17 @@ public class GravaConfiguracao {
                 return false;
             }
 
+            if (field_port.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Digite a porta de comunicação da impressora!");
+                return false;
+            }
+
             try {
                 JSONObject json = new JSONObject();
 
                 json.put("caminho", field_caminho.getText());
                 json.put("impressora", field_impressora.getText());
+                json.put("port", field_port.getText());
 
                 try (FileWriter file_writer = new FileWriter("C:/rtools/impressora/conf.json")) {
                     file_writer.write(json.toString());

@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import utils.AnaliseString;
 import utils.Block;
 import utils.BlockInterface;
+import utils.Mac;
 import utils.WSImpressoraCheque;
 
 /**
@@ -64,7 +65,7 @@ public class Impressora_cheque {
             while (!parar) {
                 StringBuilder response = new StringBuilder();
                 //URL url = new URL("http://localhost:8084/Sindical/ws/Sindical/verifica_impressora/1");
-                URL url = new URL(GC.getField_caminho().getText() + "/verifica_impressora/" + GC.getField_impressora().getText());
+                URL url = new URL(GC.getField_caminho().getText() + "/verifica_impressora/" + Mac.getInstance());
                 Charset charset = Charset.forName("UTF8");
 
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -89,7 +90,8 @@ public class Impressora_cheque {
                             AnaliseString.normalizeUpper(jSONObject.getString("favorecido")),
                             AnaliseString.normalizeUpper(jSONObject.getString("cidade")),
                             jSONObject.getString("data"),
-                            jSONObject.getString("mensagem")
+                            jSONObject.getString("mensagem"),
+                            jSONObject.getString("mac")
                     );
 
                     Bematech lib = (Bematech) Native.loadLibrary("BEMADP32", Bematech.class);
@@ -136,7 +138,7 @@ public class Impressora_cheque {
     public static boolean impressora_ativa() {
         try {
             //URL url = new URL("http://localhost:8084/Sindical/ws/Sindical/ativa_impressora/1/true");
-            URL url = new URL(GC.getField_caminho().getText() + "/ativa_impressora/" + GC.getField_impressora().getText() + "/true");
+            URL url = new URL(GC.getField_caminho().getText() + "/ativa_impressora/" + Mac.getInstance() + "/true");
 
             Charset charset = Charset.forName("UTF8");
 
@@ -159,7 +161,7 @@ public class Impressora_cheque {
         try {
             mensagem = mensagem.replace(" ", "%20");
             //URL url = new URL("http://localhost:8084/Sindical/ws/Sindical/limpa_impressora/1/" + mensagem);
-            URL url = new URL(GC.getField_caminho().getText() + "/limpa_impressora/" + GC.getField_impressora().getText() + "/" + mensagem);
+            URL url = new URL(GC.getField_caminho().getText() + "/limpa_impressora/" + Mac.getInstance() + "/" + mensagem);
             Charset charset = Charset.forName("UTF8");
 
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
