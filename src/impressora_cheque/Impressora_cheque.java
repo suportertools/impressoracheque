@@ -28,6 +28,7 @@ import utils.WSImpressoraCheque;
 public class Impressora_cheque {
 
     private static final GravaConfiguracao GC = new GravaConfiguracao();
+    private static Integer errors = 0;
 
     /**
      * @param args the command line arguments
@@ -50,6 +51,13 @@ public class Impressora_cheque {
         if (!GC.conf()) {
             return;
         }
+        load();
+
+        //WSImpressoraCheque ic = new WSImpressoraCheque(0, Integer.BYTES, apelido, Boolean.TRUE, banco, valor, favorecido, cidade, data, mensagem)
+//        
+    }
+
+    public static void load() {
         try {
             if (!impressora_ativa()) {
                 JOptionPane.showMessageDialog(null, "Erro ao Iniciar Impressora!");
@@ -91,10 +99,17 @@ public class Impressora_cheque {
                             AnaliseString.normalizeUpper(jSONObject.getString("cidade")),
                             jSONObject.getString("data"),
                             jSONObject.getString("mensagem"),
-                            jSONObject.getString("mac")
+                            ""
+                            // jSONObject.getString("mac")
                     );
-
-                    Bematech lib = (Bematech) Native.loadLibrary("BEMADP32", Bematech.class);
+                    Bematech lib = null;
+                    try {
+                        lib = (Bematech) Native.loadLibrary("BEMADP32", Bematech.class);
+                    } catch (UnsatisfiedLinkError | Exception aaa) {                        
+                        JOptionPane.showMessageDialog(null, "ERRO DE DLL:"  + aaa.getMessage());
+                        System.exit(0);
+                        return;
+                    }
                     if (erro(lib.IniciaPorta(GC.getField_port().getText()))) {
                         impressora_limpa("Não foi possível abrir porta da Impressora");
                         Thread.sleep(1000);
@@ -129,9 +144,14 @@ public class Impressora_cheque {
 
         } catch (IOException | JSONException | InterruptedException e) {
             e.getMessage();
+            if (errors > 10) {
+                JOptionPane.showMessageDialog(null, "Erro ao executar aplicação");
+                System.exit(0);
+            } else {
+                load();
+            }
+            errors++;
         }
-        //WSImpressoraCheque ic = new WSImpressoraCheque(0, Integer.BYTES, apelido, Boolean.TRUE, banco, valor, favorecido, cidade, data, mensagem)
-//        
 
     }
 
