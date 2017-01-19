@@ -56,57 +56,67 @@ public class GravaConfiguracao {
     }
 
     public ActionListener Action_Tray() {
-        ActionListener action_tray = (ActionEvent e) -> {
-            JFrame frame = new JFrame();
-            frame.setTitle("Impressora de Cheques");
-            frame.setAutoRequestFocus(true);
-            frame.setLayout(null);
-            frame.setBounds(0, 0, 450, 180);
-            frame.setResizable(false);
-            //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            // centralizar frame
-            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-            frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
+        ActionListener action_tray = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // setVisible(true);
+                JFrame frame = new JFrame();
+                frame.setTitle("Impressora de Cheques");
+                frame.setAutoRequestFocus(true);
+                frame.setLayout(null);
+                frame.setBounds(0, 0, 450, 180);
+                frame.setResizable(false);
+                //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                // centralizar frame
+                Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+                frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
 
-            JButton button_esconder = new JButton("Esconder");
-            button_esconder.addActionListener(Action_Esconder(frame));
-            button_esconder.setBounds(10, 100, 200, 30);
+                JButton button_esconder = new JButton("Esconder");
+                button_esconder.addActionListener(Action_Esconder(frame));
+                button_esconder.setBounds(10, 100, 200, 30);
 
-            JButton button_sair = new JButton("Sair do Sistema");
-            button_sair.addActionListener(Action_Sair());
-            button_sair.setBounds(220, 100, 200, 30);
+                JButton button_sair = new JButton("Sair do Sistema");
+                button_sair.addActionListener(Action_Sair());
+                button_sair.setBounds(220, 100, 200, 30);
 
-            JLabel label_caminho = new JLabel(field_caminho.getText());
-            label_caminho.setBounds(10, 10, 800, 30);
+                JLabel label_caminho = new JLabel(field_caminho.getText());
+                label_caminho.setBounds(10, 10, 800, 30);
 
-            JLabel label_impressora = new JLabel("Impressora: " + field_impressora.getText() + " - PORTA: " + field_port.getText());
-            label_impressora.setBounds(10, 30, 800, 30);
+                JLabel label_impressora = new JLabel("Impressora: " + field_impressora.getText() + " - PORTA: " + field_port.getText());
+                label_impressora.setBounds(10, 30, 800, 30);
 
-            //JLabel label_ativa = new JLabel("ATIVA");
-            label_ativa.setBounds(10, 50, 500, 50);
-            label_ativa.setFont(new Font(null, Font.PLAIN, 20));
+                //JLabel label_ativa = new JLabel("ATIVA");
+                label_ativa.setBounds(10, 50, 500, 50);
+                label_ativa.setFont(new Font(null, Font.PLAIN, 20));
 
-            frame.add(button_esconder);
-            frame.add(button_sair);
-            frame.add(label_caminho);
-            frame.add(label_impressora);
-            frame.add(label_ativa);
+                frame.add(button_esconder);
+                frame.add(button_sair);
+                frame.add(label_caminho);
+                frame.add(label_impressora);
+                frame.add(label_ativa);
 
-            frame.setVisible(true);
+                frame.setVisible(true);
+            }
         };
         return action_tray;
     }
 
     public ActionListener Action_Sair() {
-        ActionListener action_sair = (ActionEvent e) -> {
-            System.exit(0);
+        ActionListener action_sair = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
         };
         return action_sair;
     }
 
-    public ActionListener Action_Esconder(JFrame frame) {
-        ActionListener action_esconder = (ActionEvent e) -> {
-            frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+    public ActionListener Action_Esconder(final JFrame frame) {
+       ActionListener action_esconder = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+            }
         };
         return action_esconder;
     }
@@ -116,7 +126,7 @@ public class GravaConfiguracao {
             //PopupMenu popupMenu = new PopupMenu();
 
             SystemTray tray = SystemTray.getSystemTray();
-            TrayIcon trayIcon = new TrayIcon(new ImageIcon("C:/rtools/impressora/impressora-icon.png").getImage(), "Impressora de Cheques");
+            TrayIcon trayIcon = new TrayIcon(new ImageIcon("impressora-icon.png").getImage(), "Impressora de Cheques");
 
             trayIcon.addActionListener(Action_Tray());
             //trayIcon.setPopupMenu(popupMenu);

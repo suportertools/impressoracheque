@@ -92,9 +92,13 @@ public class Impressora_cheque {
                     in.close();
                 }
                 con.disconnect();
+                if (response.equals("null")) {
+                    JOptionPane.showMessageDialog(null, "O SERVIDOR NAO RETORNOU NENHUMA RESPOSTA!");
+                    System.exit(0);
+                    return;
+                }
                 JSONObject jSONObject = new JSONObject(response.toString());
-
-                if (jSONObject.getInt("id") != -1) {
+                if (jSONObject.getInt("id") != -1 && !jSONObject.getString("banco").isEmpty() && !jSONObject.getString("valor").isEmpty()) {
                     GC.getLabel_ativa().setText("IMPRIMINDO DOCUMENTO...");
                     WSImpressoraCheque ic = new WSImpressoraCheque(
                             jSONObject.getInt("id"),
@@ -109,7 +113,7 @@ public class Impressora_cheque {
                             ""
                     // jSONObject.getString("mac")
                     );
-                    Bematech lib = null;
+                    Bematech lib;
                     try {
                         lib = (Bematech) Native.loadLibrary("BEMADP32", Bematech.class);
                     } catch (UnsatisfiedLinkError | Exception aaa) {
@@ -140,25 +144,20 @@ public class Impressora_cheque {
                     impressora_limpa("ok");
                 }
 
-                Thread.sleep(1000);
+                Thread.sleep(6000);
 
                 if (!impressora_ativa()) {
                     JOptionPane.showMessageDialog(null, "Sistema sindical fora do ar.");
-                    System.exit(0);
                     return;
                 }
             }
 
         } catch (IOException | JSONException | InterruptedException e) {
-            e.getMessage();
-            if (errors > 10) {
-                JOptionPane.showMessageDialog(null, "Erro ao executar aplicação");
-                System.exit(0);
-            } else {
-                load();
-            }
-            errors++;
+            JOptionPane.showMessageDialog(null, "Erro ao executar aplicação");
+            System.exit(0);
         }
+        JOptionPane.showMessageDialog(null, "Erro ao executar aplicação");
+        System.exit(0);
 
     }
 
