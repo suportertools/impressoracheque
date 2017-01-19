@@ -51,6 +51,13 @@ public class Impressora_cheque {
         if (!GC.conf()) {
             return;
         }
+        try {
+            Native.loadLibrary("BEMADP32", Bematech.class);
+        } catch (UnsatisfiedLinkError | Exception aaa) {
+            JOptionPane.showMessageDialog(null, "ERRO DE DLL:" + aaa.getMessage());
+            System.exit(0);
+            return;
+        }
         load();
 
         //WSImpressoraCheque ic = new WSImpressoraCheque(0, Integer.BYTES, apelido, Boolean.TRUE, banco, valor, favorecido, cidade, data, mensagem)
@@ -100,13 +107,13 @@ public class Impressora_cheque {
                             jSONObject.getString("data"),
                             jSONObject.getString("mensagem"),
                             ""
-                            // jSONObject.getString("mac")
+                    // jSONObject.getString("mac")
                     );
                     Bematech lib = null;
                     try {
                         lib = (Bematech) Native.loadLibrary("BEMADP32", Bematech.class);
-                    } catch (UnsatisfiedLinkError | Exception aaa) {                        
-                        JOptionPane.showMessageDialog(null, "ERRO DE DLL:"  + aaa.getMessage());
+                    } catch (UnsatisfiedLinkError | Exception aaa) {
+                        JOptionPane.showMessageDialog(null, "ERRO DE DLL:" + aaa.getMessage());
                         System.exit(0);
                         return;
                     }
