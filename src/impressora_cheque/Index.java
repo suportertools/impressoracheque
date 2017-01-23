@@ -98,6 +98,7 @@ public class Index {
 
             Preloader p = new Preloader();
             while (!parar) {
+                Boolean err = false;
                 try {
                     StringBuilder response = new StringBuilder();
                     //URL url = new URL("http://localhost:8084/Sindical/ws/Sindical/verifica_impressora/1");
@@ -120,7 +121,6 @@ public class Index {
                     }
                     JSONObject jSONObject = new JSONObject(response.toString());
                     if (jSONObject.getInt("id") != -1 && !jSONObject.getString("banco").isEmpty() && !jSONObject.getString("valor").isEmpty()) {
-                        Boolean err = false;
                         GC.getLabel_ativa().setText("IMPRIMINDO DOCUMENTO...");
                         WSImpressoraCheque ic = new WSImpressoraCheque(
                                 jSONObject.getInt("id"),
@@ -207,6 +207,10 @@ public class Index {
                     p.show();
                     Thread.sleep(5000);
                     p.hide();
+                }
+                if (err) {
+                    JOptionPane.showMessageDialog(null, "Erro ao executar aplicação. Impressora.");
+                    System.exit(0);
                 }
             }
 
