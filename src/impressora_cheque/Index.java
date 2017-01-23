@@ -136,8 +136,8 @@ public class Index {
                         // jSONObject.getString("mac")
                         );
                         p = new Preloader();
-                        p.setAppTitle(ic.getFavorecido() + " no valor de " + ic.getValor());
-                        p.setAppStatus("...");
+                        p.setAppTitle("Impressão em andamento...");
+                        p.setAppStatus(ic.getFavorecido() + " no valor de " + ic.getValor());
                         p.setShowIcon(true);
                         p.setWaitingStarted(true);
                         p.show();
@@ -185,7 +185,7 @@ public class Index {
                         GC.getLabel_ativa().setText("ATIVA");
                         impressora_limpa("ok");
                     }
-
+                    p.hide();
                     Thread.sleep(6000);
 
                     if (!impressora_ativa()) {
