@@ -27,11 +27,11 @@ import utils.WSImpressoraCheque;
  *
  * @author Claudemir Rtools
  */
-public class Index extends JFrame {
+public class Index {
 
     private static final GravaConfiguracao GC = new GravaConfiguracao();
     private static Integer errors = 0;
-    private final Preloader preloader;
+    // private final Preloader preloader;
 
     /**
      * @param args the command line arguments
@@ -62,22 +62,24 @@ public class Index extends JFrame {
             System.exit(0);
             return;
         }
-        new Index();
+        try {
+            Preloader p = new Preloader();
+            p.setAppTitle("Dispostivo - " + Mac.getInstance());
+            p.setAppStatus("Iniciando...");
+            p.setShowIcon(true);
+            p.setWaitingStarted(true);
+            p.show();
+            Thread.sleep(1000);
+            p.reloadStatus("Verificando se computador é registrado...");
+            Thread.sleep(3000);
+            p.hide();
+        } catch (Exception e) {
+
+        }
+        load();
 
         //WSImpressoraCheque ic = new WSImpressoraCheque(0, Integer.BYTES, apelido, Boolean.TRUE, banco, valor, favorecido, cidade, data, mensagem)
 //        
-    }
-
-    public Index() {
-        preloader = new Preloader();
-        preloader.setAppTitle("Dispostivo - " + Mac.getInstance());
-        preloader.setAppStatus("Iniciando...");
-        preloader.setShowIcon(true);
-        preloader.setWaitingStarted(true);
-        preloader.show();
-        load();
-        preloader.reloadStatus("Verificando se computador é registrado...");
-        preloader.hide();
     }
 
     public static void load() {
@@ -93,88 +95,122 @@ public class Index extends JFrame {
             Boolean parar = false;
 
             JOptionPane.showMessageDialog(null, "Programa em Funcionamento.");
-            while (!parar) {
-                StringBuilder response = new StringBuilder();
-                //URL url = new URL("http://localhost:8084/Sindical/ws/Sindical/verifica_impressora/1");
-                URL url = new URL(GC.getField_caminho().getText() + "/verifica_impressora/" + Mac.getInstance());
-                Charset charset = Charset.forName("UTF8");
 
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.155 Safari/537.36");
-                con.setRequestMethod("GET");
-                con.connect();
-                try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), charset))) {
-                    response.append(in.readLine());
-                    in.close();
-                }
-                con.disconnect();
-                if (response.equals("null")) {
-                    JOptionPane.showMessageDialog(null, "O SERVIDOR NAO RETORNOU NENHUMA RESPOSTA!");
-                    System.exit(0);
-                    return;
-                }
-                JSONObject jSONObject = new JSONObject(response.toString());
-                if (jSONObject.getInt("id") != -1 && !jSONObject.getString("banco").isEmpty() && !jSONObject.getString("valor").isEmpty()) {
-                    GC.getLabel_ativa().setText("IMPRIMINDO DOCUMENTO...");
-                    WSImpressoraCheque ic = new WSImpressoraCheque(
-                            jSONObject.getInt("id"),
-                            jSONObject.getString("apelido"),
-                            jSONObject.getBoolean("ativo"),
-                            jSONObject.getString("banco"),
-                            jSONObject.getString("valor"),
-                            AnaliseString.normalizeUpper(jSONObject.getString("favorecido")),
-                            AnaliseString.normalizeUpper(jSONObject.getString("cidade")),
-                            jSONObject.getString("data"),
-                            jSONObject.getString("mensagem"),
-                            ""
-                    // jSONObject.getString("mac")
-                    );
-                    Bematech lib;
-                    try {
-                        lib = (Bematech) Native.loadLibrary("BEMADP32", Bematech.class);
-                    } catch (UnsatisfiedLinkError | Exception aaa) {
-                        JOptionPane.showMessageDialog(null, "ERRO DE DLL:" + aaa.getMessage());
+            Preloader p = new Preloader();
+            while (!parar) {
+                try {
+                    StringBuilder response = new StringBuilder();
+                    //URL url = new URL("http://localhost:8084/Sindical/ws/Sindical/verifica_impressora/1");
+                    URL url = new URL(GC.getField_caminho().getText() + "/verifica_impressora/" + Mac.getInstance());
+                    Charset charset = Charset.forName("UTF8");
+
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    con.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.155 Safari/537.36");
+                    con.setRequestMethod("GET");
+                    con.connect();
+                    try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), charset))) {
+                        response.append(in.readLine());
+                        in.close();
+                    }
+                    con.disconnect();
+                    if (response.equals("null")) {
+                        JOptionPane.showMessageDialog(null, "O SERVIDOR NAO RETORNOU NENHUMA RESPOSTA!");
                         System.exit(0);
                         return;
                     }
-                    if (erro(lib.IniciaPorta(GC.getField_port().getText()))) {
-                        impressora_limpa("Não foi possível abrir porta da Impressora");
-                        Thread.sleep(1000);
-                        continue;
-                    }
+                    JSONObject jSONObject = new JSONObject(response.toString());
+                    if (jSONObject.getInt("id") != -1 && !jSONObject.getString("banco").isEmpty() && !jSONObject.getString("valor").isEmpty()) {
+                        Boolean err = false;
+                        GC.getLabel_ativa().setText("IMPRIMINDO DOCUMENTO...");
+                        WSImpressoraCheque ic = new WSImpressoraCheque(
+                                jSONObject.getInt("id"),
+                                jSONObject.getString("apelido"),
+                                jSONObject.getBoolean("ativo"),
+                                jSONObject.getString("banco"),
+                                jSONObject.getString("valor"),
+                                AnaliseString.normalizeUpper(jSONObject.getString("favorecido")),
+                                AnaliseString.normalizeUpper(jSONObject.getString("cidade")),
+                                jSONObject.getString("data"),
+                                jSONObject.getString("mensagem"),
+                                ""
+                        // jSONObject.getString("mac")
+                        );
+                        p = new Preloader();
+                        p.setAppTitle(ic.getFavorecido() + " no valor de " + ic.getValor());
+                        p.setAppStatus("...");
+                        p.setShowIcon(true);
+                        p.setWaitingStarted(true);
+                        p.show();
+                        Bematech lib;
+                        try {
+                            lib = (Bematech) Native.loadLibrary("BEMADP32", Bematech.class);
+                        } catch (UnsatisfiedLinkError | Exception aaa) {
+                            JOptionPane.showMessageDialog(null, "ERRO DE DLL:" + aaa.getMessage());
+                            p.hide();
+                            System.exit(0);
+                            return;
+                        }
+                        if (!err) {
+                            if (erro(lib.IniciaPorta(GC.getField_port().getText()))) {
+                                err = true;
+                                impressora_limpa("Não foi possível abrir porta da Impressora");
+                                p.reloadStatus("Não foi possível abrir porta da Impressora");
+                                Thread.sleep(1000);
+                                p.hide();
+                                continue;
+                            }
 
-                    if (erro(lib.ImprimeCheque(ic.getBanco(), ic.getValor(), ic.getFavorecido(), ic.getCidade(), ic.getData(), ""))) {
-                        impressora_limpa("Não foi possível imprimir Cheque");
-                        Thread.sleep(1000);
-                        continue;
-                    }
+                        }
+                        if (!err) {
+                            if (erro(lib.ImprimeCheque(ic.getBanco(), ic.getValor(), ic.getFavorecido(), ic.getCidade(), ic.getData(), ""))) {
+                                err = true;
+                                impressora_limpa("Não foi possível imprimir Cheque");
+                                p.reloadStatus("Não foi possível imprimir Cheque");
+                                Thread.sleep(1000);
+                                p.hide();
+                                continue;
+                            }
+                        }
 
-                    if (erro(lib.FechaPorta(GC.getField_port().getText()))) {
-                        impressora_limpa("Não foi possível fechar porta da Impressora");
-                        Thread.sleep(1000);
-                        continue;
+                        if (!err) {
+                            if (erro(lib.FechaPorta(GC.getField_port().getText()))) {
+                                err = true;
+                                impressora_limpa("Não foi possível fechar porta da Impressora");
+                                p.reloadStatus("Não foi possível fechar porta da Impressora");
+                                Thread.sleep(1000);
+                                p.hide();
+                                continue;
+                            }
+                        }
+                        GC.getLabel_ativa().setText("ATIVA");
+                        impressora_limpa("ok");
                     }
 
                     Thread.sleep(6000);
-                    GC.getLabel_ativa().setText("ATIVA");
-                    impressora_limpa("ok");
-                }
 
-                Thread.sleep(6000);
-
-                if (!impressora_ativa()) {
-                    Preloader p = new Preloader();
+                    if (!impressora_ativa()) {
+                        p = new Preloader();
+                        p.setAppTitle("Servidor offline, aguarde");
+                        p.setAppStatus("Servidor offline, aguarde");
+                        p.setWaitingStarted(false);
+                        p.setMinModal(true);
+                        p.show();
+                        Thread.sleep(1000);
+                        p.hide();
+                    }
+                } catch (Exception e) {
+                    p = new Preloader();
                     p.setAppTitle("Servidor offline, aguarde");
-                    p.setAppStatus("Servidor offline, aguarde");
+                    p.setAppStatus("Verifique sua conexão com a internet");
                     p.setWaitingStarted(false);
                     p.setMinModal(true);
-                    p.show();                    
-                    // JOptionPane.showMessageDialog(null, "Sistema sindical fora do ar.");
-                    // return;
+                    p.show();
+                    Thread.sleep(5000);
+                    p.hide();
                 }
             }
 
-        } catch (IOException | JSONException | InterruptedException e) {
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Erro ao executar aplicação");
             System.exit(0);
         }
