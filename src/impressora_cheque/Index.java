@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,21 +20,24 @@ import utils.AnaliseString;
 import utils.Block;
 import utils.BlockInterface;
 import utils.Mac;
+import utils.Preloader;
 import utils.WSImpressoraCheque;
 
 /**
  *
  * @author Claudemir Rtools
  */
-public class Impressora_cheque {
+public class Index extends JFrame {
 
     private static final GravaConfiguracao GC = new GravaConfiguracao();
     private static Integer errors = 0;
+    private final Preloader preloader;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+
         Block.TYPE = "IMPRESSORA";
         if (!Block.registerInstance()) {
             // instance already running.
@@ -58,10 +62,22 @@ public class Impressora_cheque {
             System.exit(0);
             return;
         }
-        load();
+        new Index();
 
         //WSImpressoraCheque ic = new WSImpressoraCheque(0, Integer.BYTES, apelido, Boolean.TRUE, banco, valor, favorecido, cidade, data, mensagem)
 //        
+    }
+
+    public Index() {
+        preloader = new Preloader();
+        preloader.setAppTitle("Dispostivo - " + Mac.getInstance());
+        preloader.setAppStatus("Iniciando...");
+        preloader.setShowIcon(true);
+        preloader.setWaitingStarted(true);
+        preloader.show();
+        load();
+        preloader.reloadStatus("Verificando se computador é registrado...");
+        preloader.hide();
     }
 
     public static void load() {
@@ -147,8 +163,14 @@ public class Impressora_cheque {
                 Thread.sleep(6000);
 
                 if (!impressora_ativa()) {
-                    JOptionPane.showMessageDialog(null, "Sistema sindical fora do ar.");
-                    return;
+                    Preloader p = new Preloader();
+                    p.setAppTitle("Servidor offline, aguarde");
+                    p.setAppStatus("Servidor offline, aguarde");
+                    p.setWaitingStarted(false);
+                    p.setMinModal(true);
+                    p.show();                    
+                    // JOptionPane.showMessageDialog(null, "Sistema sindical fora do ar.");
+                    // return;
                 }
             }
 
