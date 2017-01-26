@@ -1,20 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package impressora_cheque;
 
 import com.sun.jna.Native;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import org.json.JSONException;
 import org.json.JSONObject;
 import utils.AnaliseString;
 import utils.Block;
