@@ -163,6 +163,7 @@ public class Index {
                         }
                         if (!err) {
                             if (erro(lib.ImprimeCheque(ic.getBanco(), ic.getValor(), ic.getFavorecido(), ic.getCidade(), ic.getData(), ""))) {
+                                lib.FechaPorta(GC.getField_port().getText());
                                 err = true;
                                 impressora_limpa("Não foi possível imprimir Cheque");
                                 p.reloadStatus("Não foi possível imprimir Cheque");
@@ -187,7 +188,7 @@ public class Index {
                     }
 
                     Thread.sleep(6000);
-
+                    p.hide();
                     if (!impressora_ativa()) {
                         p = new Preloader();
                         p.setAppTitle("Servidor offline, aguarde");
@@ -284,7 +285,7 @@ public class Index {
             default:
                 System.out.println("Erro não Encontrado.");
         }
-        return false;
+        return true;
     }
 
 }
