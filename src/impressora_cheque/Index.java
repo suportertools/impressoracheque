@@ -1,20 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package impressora_cheque;
 
 import com.sun.jna.Native;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import org.json.JSONException;
 import org.json.JSONObject;
 import utils.AnaliseString;
 import utils.Block;
@@ -136,8 +129,8 @@ public class Index {
                         // jSONObject.getString("mac")
                         );
                         p = new Preloader();
-                        p.setAppTitle(ic.getFavorecido() + " no valor de " + ic.getValor());
-                        p.setAppStatus("...");
+                        p.setAppTitle("Impressão em andamento...");
+                        p.setAppStatus(ic.getFavorecido() + " no valor de " + ic.getValor());
                         p.setShowIcon(true);
                         p.setWaitingStarted(true);
                         p.show();
@@ -186,7 +179,7 @@ public class Index {
                         GC.getLabel_ativa().setText("ATIVA");
                         impressora_limpa("ok");
                     }
-
+                    p.hide();
                     Thread.sleep(6000);
                     p.hide();
                     if (!impressora_ativa()) {
