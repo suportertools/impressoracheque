@@ -1,7 +1,8 @@
-
 package impressora_cheque;
 
+import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.sun.jna.Platform;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -26,6 +27,14 @@ public class Index {
     private static Integer errors = 0;
     // private final Preloader preloader;
 
+    public interface simpleDLL extends Library {
+
+        simpleDLL INSTANCE = (simpleDLL) Native.loadLibrary(
+                (Platform.isWindows() ? "simpleDLL" : "simpleDLLLinuxPort"), simpleDLL.class);
+
+        int giveIntGetInt(int a);               // int giveIntGetInt(int a);
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -48,8 +57,30 @@ public class Index {
         if (!GC.conf()) {
             return;
         }
+
         try {
-            Native.loadLibrary("BEMADP32", Bematech.class);
+            // String myLibraryPath = System.getProperty("user.dir");
+            // System.setProperty("java.library.path", myLibraryPath);
+            // System.setProperty("jna.library.path", "c:/libtesseract302.dll");
+            // System.setProperty("jna.library.path", "C:/Windows/System32");
+            // System.loadLibrary("BEMADP32");
+            // System.setProperty("jna.library.path", "BEMADP32");
+            // myLibraryPath = System.getProperty("user.dir");
+            // Native.loadLibrary("BEMADP32", Bematech.class);
+            // System.out.println(System.getProperty("java.library.path"));
+            //  System.load("BEMADP32");
+            // System.loadLibrary("C:\\Windows\\System32\\BEMADP32.dll");
+            Boolean ok = false;
+            Bematech INSTANCE;
+            if (Platform.isWindows()) {
+                if (Platform.is64Bit()) {
+                    ok = true;
+                    INSTANCE = Native.loadLibrary("BEMADP32", Bematech.class);
+                } else {
+                    INSTANCE = Native.loadLibrary("BEMADP32", Bematech.class);
+                }
+            }
+
         } catch (UnsatisfiedLinkError | Exception aaa) {
             JOptionPane.showMessageDialog(null, "ERRO DE DLL:" + aaa.getMessage());
             System.exit(0);
@@ -134,9 +165,9 @@ public class Index {
                         p.setShowIcon(true);
                         p.setWaitingStarted(true);
                         p.show();
-                        Bematech lib;
+                        Bematech INSTANCE;
                         try {
-                            lib = (Bematech) Native.loadLibrary("BEMADP32", Bematech.class);
+                            INSTANCE = (Bematech) Native.loadLibrary("BEMADP32", Bematech.class);
                         } catch (UnsatisfiedLinkError | Exception aaa) {
                             JOptionPane.showMessageDialog(null, "ERRO DE DLL:" + aaa.getMessage());
                             p.hide();
@@ -144,7 +175,7 @@ public class Index {
                             return;
                         }
                         if (!err) {
-                            if (erro(lib.IniciaPorta(GC.getField_port().getText()))) {
+                            if (erro(INSTANCE.IniciaPorta(GC.getField_port().getText()))) {
                                 err = true;
                                 impressora_limpa("Não foi possível abrir porta da Impressora");
                                 p.reloadStatus("Não foi possível abrir porta da Impressora");
@@ -155,8 +186,8 @@ public class Index {
 
                         }
                         if (!err) {
-                            if (erro(lib.ImprimeCheque(ic.getBanco(), ic.getValor(), ic.getFavorecido(), ic.getCidade(), ic.getData(), ""))) {
-                                lib.FechaPorta(GC.getField_port().getText());
+                            if (erro(INSTANCE.ImprimeCheque(ic.getBanco(), ic.getValor(), ic.getFavorecido(), ic.getCidade(), ic.getData(), ""))) {
+                                INSTANCE.FechaPorta(GC.getField_port().getText());
                                 err = true;
                                 impressora_limpa("Não foi possível imprimir Cheque");
                                 p.reloadStatus("Não foi possível imprimir Cheque");
@@ -167,7 +198,7 @@ public class Index {
                         }
 
                         if (!err) {
-                            if (erro(lib.FechaPorta(GC.getField_port().getText()))) {
+                            if (erro(INSTANCE.FechaPorta(GC.getField_port().getText()))) {
                                 err = true;
                                 impressora_limpa("Não foi possível fechar porta da Impressora");
                                 p.reloadStatus("Não foi possível fechar porta da Impressora");

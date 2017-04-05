@@ -1,0 +1,7 @@
+BemaDP32.ini em C:/Windows
+
+BemaDP32.dll em C:/Windows/System32
+
+BemaDPWeb.ocx em C:/Windows/System32 -- Não necessário
+
+Caso não funcione, coloque tudo junto com o arquivo executável (impressora_cheque.jar)

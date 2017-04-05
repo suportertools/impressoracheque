@@ -1,0 +1,5 @@
+{
+    "port": "COM7",
+    "caminho":"http://192.168.1.160:8080/Sindical/ws/ComercioSorocaba",
+    "impressora":"3"
+}
